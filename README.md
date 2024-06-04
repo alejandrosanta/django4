@@ -78,3 +78,38 @@ def thank_you(request):
     </body>
 </html>
 ```
+
+### 2. Database
+> app_name/models.py
+```python
+from django.db import models
+
+class Reviwe(models.Model):
+    user_name = models.CharField(max_length=100)
+    review_text = models.TextField()
+    rating = models.IntegerField()
+```
+> app_name/views.py
+```python
+from django.shortcuts import render
+from django.http import HttpResponseRedirect
+from .forms import ReviewForm
+from .models import Review
+
+def review(request):
+    if request.method == 'POST':
+        form = ReviewForm(request.POST)
+        if form.is_valid():
+            print(form.cleaned_data)
+            return HttpResponseRedirect("/thank-you")
+    else:
+        form = ReviewForm()
+    
+    form = ReviewForm()
+    return render(request, "reviews/review.html", {
+        "form":form
+    })
+
+def thank_you(request):
+    return render(request, "reviews/thank_you.html")
+```
