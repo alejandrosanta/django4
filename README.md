@@ -8,6 +8,8 @@ class ReviewForm(forms.Form):
         "required": "Your name must not be empty",
         "max_lenght": "Please enter a shorter name"
     })
+    review_text = forms.CharField(label="Your feedback", widget=forms.Textarea, max_length=200)
+    rating = forms.IntegerField(label="Your rating", min_value=1, max_value=5)
 ```
 
 > app_name/views.py
@@ -36,21 +38,26 @@ def thank_you(request):
 
 > app_name/templates/app_name/review.html
 ```html
+{% load static %}
+
 <!DOCTYPE html>
 <html lang="en">
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Your Review</title>
+        <link rel="stylesheet" href="{% static "reviews/styles.css" %}">
     </head>
     <body>
         <form action="/" method="POST">
             {% csrf_token %}
-            <div class="form-control {% if form.user_name.errors %}errors{% endif %}">
-                {{ form.user_name.label_tag }}
-                {{ form.user_name }}
-                {{ form.user_name.errors }}
-            </div>
+            {% for field in form %}
+                <div class="form-control {% if field.errors %}errors{% endif %}">
+                    {{ field.label_tag }}
+                    {{ field }}
+                    {{ field.errors }}
+                </div>
+            {% endfor %}
             <button type="submit">Send</button>
         </form>
     </body>
