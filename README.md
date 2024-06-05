@@ -78,6 +78,17 @@ def thank_you(request):
     </body>
 </html>
 ```
+> project_name/urls.py
+
+```python
+from django.contrib import admin
+from django.urls import path, include
+
+urlpatterns = [
+    path('admin/', admin.site.urls),
+    path('', include("reviews.urls"))
+]
+```
 
 ### 2. Database
 > app_name/models.py
