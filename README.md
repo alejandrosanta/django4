@@ -90,6 +90,20 @@ urlpatterns = [
 ]
 ```
 
+> project_name/settings.py
+
+```python
+INSTALLED_APPS = [
+    'reviews',
+    'django.contrib.admin',
+    'django.contrib.auth',
+    'django.contrib.contenttypes',
+    'django.contrib.sessions',
+    'django.contrib.messages',
+    'django.contrib.staticfiles',
+]
+```
+
 ### 2. Database
 > app_name/models.py
 ```python
