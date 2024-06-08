@@ -358,3 +358,22 @@ class ThankYouView(TemplateView):
     <p>{{ message }}</p>
 {% endblock %}
 ```
+
+### 7. List
+
+> app_name/templates/app_name/review_list.html
+```html
+{% extends "reviews/base.html" %}
+
+{% block title %} All Reviews {% endblock %}
+
+{% block content %}
+<ul>
+    {% for review in reviews %}
+        <li>
+            {{ review.user_name }} (Rating: {{ review.rating }})
+        </li>
+    {% endfor %}
+</ul>
+{% endblock %}
+```
