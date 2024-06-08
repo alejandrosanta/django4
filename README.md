@@ -298,3 +298,63 @@ def thank_you(request):
 {% endblock %}
 ```
 
+### 6. TemplateView
+
+> app_name/urls.py
+```python
+from django.urls import path
+from . import views
+
+urlpatterns = [
+    path("",views.ReviewView.as_view()),
+    path("thank-you",views.ThankYouView.as_view())
+]
+```
+
+> app_name/views.py
+```python
+from django.shortcuts import render
+from django.http import HttpResponseRedirect
+from django.views import View
+from django.views.generic.base import TemplateView
+
+from .forms import ReviewForm
+
+class ReviewView(View):
+    def get(self, request):
+        form = ReviewForm()
+        return render(request, "reviews/review.html", {
+            "form":form
+        })
+    def post(self, request):
+        form = ReviewForm(request.POST)
+
+        if form.is_valid():
+            form.save()
+            return HttpResponseRedirect("/thank-you")
+        
+        return render(request, "reviews/review.html", {
+            "form":form
+        })
+
+class ThankYouView(TemplateView):
+    template_name = "reviews/thank_you.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["message"] = "This works!!"
+        return context
+```
+
+> app_name/templates/app_name/thank_you.html
+```html
+{% extends "reviews/base.html" %}
+
+{% block title %}
+    Thank You
+{% endblock %}
+{% block content %}
+    <h1>Thank you!</h1>
+    <p>{{ message }}</p>
+{% endblock %}
+```
