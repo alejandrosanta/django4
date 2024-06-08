@@ -240,3 +240,61 @@ class ReviewView(View):
 def thank_you(request):
     return render(request, "reviews/thank_you.html")
 ```
+
+### 5. Templates
+
+> app_name/templates/app_name/base.html
+```html
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>
+            {% block title %}
+            {% endblock %}
+        </title>
+        <link rel="stylesheet" href="{% static "reviews/styles.css" %}">
+    </head>
+    <body>
+        {% block content %}
+        {% endblock %}    
+    </body>
+</html>
+```
+
+> app_name/templates/app_name/review.html
+```html
+{% extends "reviews/base.html" %}
+
+{% block title %}
+    Your Review
+{% endblock %}
+{% block content %}      
+    <form action="/" method="POST">
+        {% csrf_token %}
+        {% for field in form %}
+            <div class="form-control {% if field.errors %}errors{% endif %}">
+                {{ field.label_tag }}
+                {{ field }}
+                {{ field.errors }}
+            </div>
+        {% endfor %}
+        <button type="submit">Send</button>
+    </form>
+{% endblock %}
+```
+
+> app_name/templates/app_name/thank_you.html
+```html
+{% extends "reviews/base.html" %}
+
+{% block title %}
+    Thank You
+{% endblock %}
+{% block content %}
+    <h1>Thank you!</h1>
+{% endblock %}
+```
+
