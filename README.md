@@ -377,3 +377,55 @@ class ThankYouView(TemplateView):
 </ul>
 {% endblock %}
 ```
+
+> app_name/views.py
+```python
+from .models import Review
+
+class ReviewListView(TemplateView):
+    template_name = "reviews/review_list.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        reviews = Review.objects.all()
+        context["reviews"] = reviews
+        return context
+```
+
+> app_name/urls.py
+```python
+    path("reviews",views.ReviewListView.as_view())
+
+```
+
+### 8. Show
+> app_name/urls.py
+```python
+    path("review/<int:id>",views.SingleReviewView.as_view()),   
+```
+
+> app_name/views.py
+```python
+class SingleReviewView(TemplateView):
+    template_name = "reviews/single_review.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        review_id = kwargs["id"]
+        selected_review = Review.objects.get(pk=review_id)
+        context["review"] = selected_review
+        return context
+```
+
+> app_name/templates/app_name/single_review.html
+```html
+    {% extends "reviews/base.html" %}
+
+    {% block title %} Review Details {% endblock %}
+
+    {% block content %}
+        <h1>{{ review.user_name }}</h1>
+        <p>Rating:{{ review.rating }}</p>
+        <p>{{ review.review_text }}</p>
+    {% endblock %}
+```
