@@ -471,3 +471,49 @@ class SingleReviewView(TemplateView):
         success_url = "/thank-you"
 ```
 
+## File Uploads
+### 1. First Version
+
+> app_name/views.py
+
+```python
+    from django.shortcuts import render
+    from django.views import View
+    from django.http import HttpResponseRedirect
+
+    def store_file(file):
+        with open("temp/image.jpg", "wb+") as dest:
+            for chunk in file.chunks():
+                dest.write(chunk)
+
+    class CreateProfileView(View):
+        def get(self, request):
+            return render(request, "profiles/create_profile.html")
+
+        def post(self, request):
+            store_file(request.FILES["image"])
+            return HttpResponseRedirect("/profiles")
+```
+
+> app_name/templates/app_name/create_profile.html
+
+```html
+    {% load static %}
+
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create a Profile</title>
+    <link rel="stylesheet" href="{% static "profiles/styles.css" %}">
+    </head>
+    <body>
+    <form action="/profiles/" method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+        <input type="file" name="image" />
+        <button>Upload!</button>
+    </form>
+    </body>
+    </html>
+```
