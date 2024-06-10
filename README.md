@@ -397,8 +397,20 @@ class ReviewListView(TemplateView):
     path("reviews",views.ReviewListView.as_view())
 
 ```
+### 8. ListView
 
-### 8. Show
+> app_name/views.py
+```python
+from django.views.generic import ListView
+
+class ReviewListView(ListView):
+    template_name = "reviews/review_list.html"
+    model = Review
+    context_object_name = "reviews"
+```
+
+### 9. Detail
+
 > app_name/urls.py
 ```python
     path("review/<int:id>",views.SingleReviewView.as_view()),   
