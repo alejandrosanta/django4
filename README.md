@@ -450,7 +450,24 @@ class SingleReviewView(TemplateView):
 ```
 > app_name/views.py
 ```python
+    from django.views.generic import DetailView
+
     class SingleReviewView(DetailView):
         template_name = "reviews/single_review.html"
         model = Review
 ```
+
+### 11. CreateView
+
+> app_name/views.py
+
+```python
+    from django.views.generic.edit import CreateView
+
+    class ReviewView(CreateView):
+        model = Review
+        form_class = ReviewForm
+        template_name = "reviews/review.html"
+        success_url = "/thank-you"
+```
+
