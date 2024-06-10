@@ -625,3 +625,73 @@ class CreateProfileView(CreateView):
     success_url = "/profiles"
 ```
 
+### 6. Using a CreateView
+
+> project_name/urls.py
+```python
+    from django.contrib import admin
+    from django.urls import path, include
+
+    from django.conf.urls.static import static
+    from django.conf import settings
+
+    urlpatterns = [
+        path('admin/', admin.site.urls),
+        path('', include("reviews.urls")),
+        path("profiles/", include("profiles.urls"))
+    ]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+```
+
+> app_name/urls.py
+```python
+    from django.urls import path
+
+    from . import views
+
+    urlpatterns = [
+        path("", views.CreateProfileView.as_view()),
+        path("list", views.ProfilesView.as_view())
+    ]
+```
+
+> project_name/settings.py
+
+```python
+    MEDIA_URL = "/user-media/"
+```
+
+> app_name/views.py
+
+```python
+    from django.views.generic import ListView
+
+    class ProfilesView(ListView):
+        template_name = "profiles/user_profiles.html"
+        model = UserProfile
+        context_object_name = "profiles"
+```
+
+> app_name/templates/app_name/user_profiles.html
+
+```html
+    {% load static %}
+
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Profiles</title>
+    <link rel="stylesheet" href="{% static "profiles/styles.css" %}">
+    </head>
+    <body>
+        <ul>
+            {% for profile in profiles %}
+                <li>
+                    <img src="{{ profile.image.url }}">
+                </li>
+            {% endfor %}
+        </ul>
+    </body>
+    </html>
+```
