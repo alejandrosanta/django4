@@ -610,3 +610,18 @@ if submitted_form.is_valid():
 ```python
     user_image = forms.ImageField()
 ```
+
+### 5. Using a CreateView
+> app_name/views.py
+
+```python
+from django.views.generic.edit import CreateView
+from .models import UserProfile
+
+class CreateProfileView(CreateView):
+    template_name = "profiles/create_profile.html"
+    model = UserProfile
+    fields = "__all__"
+    success_url = "/profiles"
+```
+
