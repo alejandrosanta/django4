@@ -597,3 +597,16 @@ if submitted_form.is_valid():
     return HttpResponseRedirect("/profiles")
 ```
 
+### 4. Using an Imagefield
+> $python3 -m pip install Pillow
+
+> app_name/models.py
+```python
+    image = models.ImageField(upload_to="images")
+```
+
+> app_name/forms.py
+
+```python
+    user_image = forms.ImageField()
+```
