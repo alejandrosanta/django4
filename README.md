@@ -441,3 +441,16 @@ class SingleReviewView(TemplateView):
         <p>{{ review.review_text }}</p>
     {% endblock %}
 ```
+
+### 10. DetailView
+
+> app_name/urls.py
+```python
+    path("review/<int:pk>",views.SingleReviewView.as_view()),   
+```
+> app_name/views.py
+```python
+    class SingleReviewView(DetailView):
+        template_name = "reviews/single_review.html"
+        model = Review
+```
