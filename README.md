@@ -517,3 +517,83 @@ class SingleReviewView(TemplateView):
     </body>
     </html>
 ```
+
+### 2. Adding a Form with a Filefield
+
+> app_name/forms.py
+
+```python
+    from django import forms
+
+    class ProfileForm(forms.Form):
+        user_image = forms.FileField()
+```
+
+> app_name/templates/app_name/create_profile.html
+
+```html
+  <form action="/profiles/" method="POST" enctype="multipart/form-data">
+    {% csrf_token %}
+    {{ form }}
+    <button>Upload!</button>
+  </form>
+```
+
+> app_name/views.py
+
+```python
+    from .forms import ProfileForm
+
+    def store_file(file):
+        with open("temp/image.jpg", "wb+") as dest:
+            for chunk in file.chunks():
+                dest.write(chunk)
+
+    class CreateProfileView(View):
+        def get(self, request):
+            form = ProfileForm()
+            return render(request, "profiles/create_profile.html", {
+                "form":form
+            })
+
+        def post(self, request):
+            submitted_form = ProfileForm(request.POST, request.FILES)
+            
+            if submitted_form.is_valid():
+                store_file(request.FILES["image"])
+                return HttpResponseRedirect("/profiles")
+            
+            return render(request, "profiles/create_profile.html", {
+                "form":submitted_form
+            })
+
+```
+
+### 3. Using Models for File Storage
+
+> project_name/settings.py
+
+```python
+    MEDIA_ROOT = BASE_DIR / "uploads"
+```
+
+> app_name/models.py
+
+```python
+from django.db import models
+
+class UserProfile(models.Model):
+    image = models.FileField(upload_to="images")
+```
+
+> app_name/views.py
+
+```python
+from .models import UserProfile
+
+if submitted_form.is_valid():
+    profile = UserProfile(image=request.FILES["user_image"])
+    profile.save()
+    return HttpResponseRedirect("/profiles")
+```
+
