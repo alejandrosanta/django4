@@ -695,3 +695,64 @@ class CreateProfileView(CreateView):
     </body>
     </html>
 ```
+
+## Sessions
+
+> app_name/views.py
+
+```python
+    class SingleReviewView(DetailView):
+        template_name = "reviews/single_review.html"
+        model = Review
+
+        def get_context_data(self, **kwargs):
+            context = super().get_context_data(**kwargs)
+            loaded_review = self.object
+            request = self.request
+            favorite_id = request.session.get("favorite_review")
+            context["is_favorite"] = favorite_id == str(loaded_review.id)
+            return context
+    
+    class AddFavoriteView(View):
+        def post(self, request):
+            review_id = request.POST["review_id"]
+            request.session["favorite_review"] = review_id
+            return HttpResponseRedirect("/review/" + review_id)
+```
+
+
+> app_name/urls.py
+```python
+    from django.urls import path
+    from . import views
+
+    urlpatterns = [
+        path("",views.ReviewView.as_view()),
+        path("thank-you",views.ThankYouView.as_view()),
+        path("reviews",views.ReviewListView.as_view()),
+        path("reviews/favorite",views.AddFavoriteView.as_view()),
+        path("review/<int:pk>",views.SingleReviewView.as_view()),   
+    ]
+```
+
+> app_name/templates/app_name/single_review.html
+```html
+    {% extends "reviews/base.html" %}
+
+    {% block title %} Review Details {% endblock %}
+
+    {% block content %}
+        <h1>{{ review.user_name }}</h1>
+        <p>Rating:{{ review.rating }}</p>
+        <p>{{ review.review_text }}</p>
+        {% if is_favorite %}
+            <p>This is my favorite!</p>
+        {% else %}
+            <form action="/reviews/favorite" method="POST">
+                {% csrf_token %}
+                <input type="hidden" name="review_id" value="{{ review.id }}">
+                <button>Favorite</button>
+            </form>
+        {% endif %}
+    {% endblock %}
+```
